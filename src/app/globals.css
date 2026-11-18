@@ -164,39 +164,29 @@ h3 {
 }
 
 .hero {
-  background: var(--cream);
-  border-bottom: 1px solid var(--line);
+  --hero-red: #90241c;
+  --ticket-gold: #ffce7a;
+  background: var(--hero-red);
+  color: var(--paper);
 }
 
 .hero-content {
   display: grid;
-  gap: 1.15rem;
-  padding-block: 1.35rem 1.65rem;
-}
-
-.location-label {
-  display: flex;
   align-items: center;
-  gap: 0.4rem;
-  color: var(--red);
-  font-size: 0.875rem;
-  font-weight: 700;
+  gap: clamp(1.25rem, 4vw, 3.5rem);
+  padding-block: clamp(1.45rem, 3.6vw, 3.25rem);
 }
 
 .hero h1 {
-  margin-top: 0.35rem;
-  font-size: clamp(2.8rem, 12.8vw, 5.25rem);
-  letter-spacing: -0.015em;
+  font-size: clamp(3.1rem, 14vw, 6.8rem);
+  line-height: 0.84;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
 }
 
-.hero h1 span {
-  color: var(--red);
-}
-
 .hero-description {
-  margin-top: 0.65rem;
-  color: var(--muted);
+  margin-top: 0.7rem;
+  color: var(--cream);
 }
 
 .order-links {
@@ -204,16 +194,6 @@ h3 {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-}
-
-.hero-links {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  margin-top: 1rem;
-}
-
-.hero-links .button-primary {
-  grid-column: 1 / -1;
 }
 
 .button {
@@ -233,10 +213,6 @@ h3 {
   text-align: center;
 }
 
-.hero-links .button {
-  width: 100%;
-}
-
 .button:hover {
   background: var(--red-wash);
 }
@@ -253,14 +229,12 @@ h3 {
 }
 
 .hero-figure {
-  overflow: hidden;
-  border: 1px solid var(--ink);
+  margin-top: clamp(0.8rem, 2vw, 1.35rem);
   background: var(--ink);
-  color: var(--paper);
 }
 
 .hero-photo {
-  aspect-ratio: 2.45;
+  aspect-ratio: 2.15;
   background: #544033;
 }
 
@@ -268,21 +242,196 @@ h3 {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 55%;
+  object-position: center 58%;
 }
 
 .hero-figure figcaption {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.2rem 1rem;
-  padding: 0.45rem 0.7rem;
+  gap: 0.5rem;
+}
+
+.hero-figure strong {
+  padding: 0.45rem 0.7rem 0.55rem;
+  background: var(--ticket-gold);
+  color: var(--ink);
+  font: 800 clamp(1.2rem, 3vw, 1.65rem) / 1 var(--display);
+  text-transform: uppercase;
+}
+
+.hero-figure figcaption > span {
+  padding-inline-end: 0.7rem;
+  color: var(--cream);
   font-size: 0.84rem;
 }
 
-.hero-figure figcaption span {
-  color: var(--cream);
+.order-ticket {
+  --ticket-inset: clamp(1rem, 3.2vw, 2.25rem);
+  min-width: 0;
+  padding: clamp(1.15rem, 3vw, 2rem) var(--ticket-inset) 0.65rem;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 6px 0 rgb(41 34 29 / 22%);
+}
+
+.order-ticket h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.01em;
+}
+
+.ticket-field {
+  min-width: 0;
+  margin-top: 0.85rem;
+}
+
+.ticket-field legend {
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.ticket-options {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 0.45rem;
+  margin-top: 0.3rem;
+}
+
+.ticket-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 46px;
+  padding: 0.4rem clamp(0.35rem, 1vw, 0.75rem);
+  border: 1px solid var(--line);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.ticket-options label:hover,
+.ticket-options label:has(:checked) {
+  border-color: var(--red);
+  background: var(--red-wash);
+}
+
+.ticket-options label:has(:focus-visible) {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+.ticket-options input {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  accent-color: var(--red);
+}
+
+.ticket-options input:focus-visible {
+  outline: none;
+}
+
+.ticket-toppings {
+  min-height: 2.6em;
+  margin-top: 0.45rem;
+  color: var(--muted);
+  font-size: 0.825rem;
+  line-height: 1.3;
+}
+
+.ticket-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin: 0.4rem calc(-1 * var(--ticket-inset)) 0;
+  padding: 0.7rem var(--ticket-inset);
+  border-top: 1px dashed var(--muted);
+  line-height: 1.25;
+}
+
+.ticket-summary::before,
+.ticket-summary::after {
+  position: absolute;
+  top: -0.45rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: var(--hero-red);
+  content: "";
+}
+
+.ticket-summary::before {
+  left: -0.45rem;
+}
+
+.ticket-summary::after {
+  right: -0.45rem;
+}
+
+.ticket-price-label {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.ticket-price {
+  color: var(--red-dark);
+  font: 800 2.25rem / 1 var(--display);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ticket-call {
+  width: 100%;
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+.ticket-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.65rem;
+  margin-top: 0.2rem;
+}
+
+.ticket-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 44px;
+  color: var(--red-dark);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.ticket-links .icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.ticket-fallback {
+  margin-block: 0.8rem;
+}
+
+@media (scripting: none) {
+  .ticket-field, .ticket-toppings, .ticket-summary {
+    display: none;
+  }
+}
+
+@media (width < 23rem), (51rem <= width < 62rem) {
+  .ticket-toppings {
+    min-height: 3.9em;
+  }
 }
 
 .menu-section, .faq-section, .visit-section {
@@ -700,19 +849,6 @@ details[open] .plus::after {
     display: inline;
   }
 
-  .hero-links {
-    display: flex;
-  }
-
-  .hero-links .button {
-    width: fit-content;
-    padding-inline: 0.95rem;
-  }
-
-  .hero-photo {
-    aspect-ratio: 2;
-  }
-
   .size-table tbody th {
     padding: 0.68rem 0.75rem;
     padding-left: 0;
@@ -759,46 +895,31 @@ details[open] .plus::after {
   }
 }
 
-@media (width >= 57rem) {
+@media (43rem <= width < 51rem) {
   .hero-content {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
-    align-items: center;
-    gap: clamp(1.75rem, 4vw, 3.75rem);
-    padding-block: 3.15rem 3.65rem;
+    max-width: 36rem;
+  }
+}
+
+@media (width >= 51rem) {
+  .hero-content {
+    grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr);
   }
 
   .hero h1 {
-    margin-top: 0.6rem;
-    font-size: clamp(5rem, 8.65vw, 8.2rem);
-    line-height: 0.82;
-  }
-
-  .hero h1 span {
-    display: block;
+    font-size: clamp(4.65rem, 8.55vw, 7.75rem);
   }
 
   .hero-description {
-    margin-top: 1.25rem;
     font-size: 1.05rem;
   }
 
-  .hero-links {
-    margin-top: 1.3rem;
-  }
-
-  .hero-figure {
-    box-shadow: 6px 6px 0 var(--red);
-  }
-
   .hero-photo {
-    aspect-ratio: 1.42;
+    aspect-ratio: 1.88;
   }
+}
 
-  .hero-figure figcaption {
-    padding: 0.55rem 0.85rem;
-    font-size: 0.9rem;
-  }
-
+@media (width >= 57rem) {
   .menu-layout, .section-layout {
     grid-template-columns: minmax(0, 0.3fr) minmax(0, 1fr);
     gap: clamp(2.75rem, 6.25vw, 6rem);

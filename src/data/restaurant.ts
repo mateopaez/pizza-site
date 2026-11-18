@@ -52,6 +52,28 @@ type Pizza = {
 };
 
 // In-store prices from the official menu images linked at versatospizza.com (2025-08-30).
+const tRex = {
+  name: "T-Rex",
+  toppings: "Pepperoni, salami, ham, beef, bacon, mozzarella",
+  thick: [30.45, 38.45, 47.20],
+  thinPair: [42.35, 51.10, 60.80],
+} satisfies Pizza;
+
+const versatosSpecial = {
+  name: "Versato’s Special",
+  toppings: "Pepperoni, salami, ham, mushrooms, onions, green peppers, pineapple, shrimp, mozzarella",
+  thick: [30.45, 38.45, 47.20],
+  thinPair: [42.35, 51.10, 60.80],
+} satisfies Pizza;
+
+export const bigOne = {
+  name: "The Big One",
+  toppings: `Extra meat in your choice of ${tRex.name} or ${versatosSpecial.name} style`,
+  thick: [null, 46.95, 57.75],
+  styles: [tRex, versatosSpecial],
+  weight: "about 7 lb",
+} satisfies Pizza & { styles: Pizza[]; weight: string };
+
 // Prices in each array follow pizzaSizes. A null price marks an unavailable size.
 export const pizzas: Pizza[] = [
   {
@@ -120,29 +142,15 @@ export const pizzas: Pizza[] = [
     thick: [30.45, 38.45, 47.20],
     thinPair: [42.35, 51.10, 60.80],
   },
-  {
-    name: "T-Rex",
-    toppings: "Pepperoni, salami, ham, beef, bacon, mozzarella",
-    thick: [30.45, 38.45, 47.20],
-    thinPair: [42.35, 51.10, 60.80],
-  },
+  tRex,
   {
     name: "Heater",
     toppings: "Pepperoni, double sauce, mozzarella, cheddar",
     thick: [30.45, 38.45, 47.20],
     thinPair: [42.35, 51.10, 60.80],
   },
-  {
-    name: "Versato’s Special",
-    toppings: "Pepperoni, salami, ham, mushrooms, onions, green peppers, pineapple, shrimp, mozzarella",
-    thick: [30.45, 38.45, 47.20],
-    thinPair: [42.35, 51.10, 60.80],
-  },
-  {
-    name: "The Big One",
-    toppings: "Extra meat in your choice of T-Rex or Versato’s Special style",
-    thick: [null, 46.95, 57.75],
-  },
+  versatosSpecial,
+  bigOne,
 ];
 
 export const extraToppings = [
@@ -221,7 +229,7 @@ export const menuNotes = {
 export const faq = [
   {
     question: "What makes The Big One different?",
-    answer: "The Big One has extra meat and weighs about 7 lb. An Original Thick T-Rex or Versato’s Special weighs about 4½ lb. The Big One comes in those two styles.",
+    answer: `The Big One has extra meat and weighs ${bigOne.weight}. An Original Thick T-Rex or Versato’s Special weighs about 4½ lb. The Big One comes in those two styles.`,
   },
   {
     question: "Can I swap a topping?",

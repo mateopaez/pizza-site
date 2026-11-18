@@ -1,5 +1,6 @@
 import Image from "next/image";
 import {
+  bigOne,
   combos,
   extraToppings,
   faq,
@@ -11,6 +12,7 @@ import {
   sides,
   type MenuItem,
 } from "@/data/restaurant";
+import { BigOnePicker } from "./big-one-picker";
 
 const menuCategories = [
   { id: "thick-pizza", label: "Original Thick" },
@@ -57,24 +59,75 @@ function Icon({ name }: { name: keyof typeof icons }) {
   );
 }
 
-function OrderLinks({ showMenu = false }: { showMenu?: boolean }) {
+function OrderLinks() {
   return (
-    <div className={showMenu ? "order-links hero-links" : "order-links"}>
+    <div className="order-links">
       <a className="button button-primary" href={restaurant.phones.main.href}>
         <Icon name="phone" />
         Call to Order
       </a>
-      {showMenu && (
-        <a className="button" href="#menu">
-          View Menu
-          <Icon name="down" />
-        </a>
-      )}
       <a className="button" href={restaurant.links.doorDash}>
         Order on DoorDash
         <Icon name="external" />
       </a>
     </div>
+  );
+}
+
+function BigOneHero() {
+  const sizes = pizzaSizes.flatMap((label, index) => {
+    const price = bigOne.thick[index];
+    return price === null ? [] : [{ label, price: currency.format(price) }];
+  });
+  const styles = bigOne.styles.map(({ name, toppings }) => ({ name, toppings }));
+
+  return (
+    <section className="hero" id="top" aria-labelledby="hero-heading">
+      <div className="shell hero-content">
+        <div className="hero-feature">
+          <h1 id="hero-heading">{bigOne.name}</h1>
+          <p className="hero-description">Extra meat on our Original Thick crust.</p>
+          <figure className="hero-figure">
+            <div className="hero-photo">
+              <Image
+                src="/versatos-the-big-one.webp"
+                alt="A cut T-Rex pizza showing thick layers of meat under browned mozzarella"
+                width={1055}
+                height={676}
+                fetchPriority="high"
+                loading="eager"
+                unoptimized
+              />
+            </div>
+            <figcaption>
+              <strong>Weighs {bigOne.weight}</strong>
+              <span>T-Rex style shown</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div className="order-ticket">
+          <h2>Order by phone</h2>
+          <BigOnePicker sizes={sizes} styles={styles} />
+          <noscript>
+            <p className="ticket-fallback">
+              Choose {styles.map(({ name }) => name).join(" or ")} when you call.
+            </p>
+            <ul className="ticket-fallback">
+              {sizes.map(({ label, price }) => <li key={label}>{label} {price} CAD</li>)}
+            </ul>
+          </noscript>
+          <a className="button button-primary ticket-call" href={restaurant.phones.main.href}>
+            <Icon name="phone" />
+            Call {restaurant.phones.main.label}
+          </a>
+          <div className="ticket-links">
+            <a href="#menu">Full menu <Icon name="down" /></a>
+            <a href={restaurant.links.doorDash}>Order on DoorDash <Icon name="external" /></a>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -188,33 +241,7 @@ export default function Home() {
       </header>
 
       <main id="main" tabIndex={-1}>
-        <section className="hero" id="top" aria-labelledby="restaurant-heading">
-          <div className="shell hero-content">
-            <div className="hero-copy">
-              <p className="location-label">
-                <Icon name="pin" />
-                {address.city}, Alberta
-              </p>
-              <h1 id="restaurant-heading">Versato’s <span>Pizza</span></h1>
-              <p className="hero-description">Original thick pizza and thin-topping two-pizza deals.</p>
-              <OrderLinks showMenu />
-            </div>
-            <figure className="hero-figure">
-              <div className="hero-photo">
-                <Image
-                  src="/versatos-the-big-one.webp"
-                  alt="A cut T-Rex pizza showing thick layers of meat under browned mozzarella"
-                  width={1055}
-                  height={676}
-                  fetchPriority="high"
-                  loading="eager"
-                  unoptimized
-                />
-              </div>
-              <figcaption><strong>The Big One</strong><span>T-Rex style</span></figcaption>
-            </figure>
-          </div>
-        </section>
+        <BigOneHero />
 
         <section className="menu-section" id="menu" aria-labelledby="menu-heading">
           <div className="shell menu-layout">
