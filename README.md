@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Versato’s Pizza
 
-## Getting Started
+A local redesign concept for Versato’s Pizza in Edmonton. The homepage uses the restaurant’s published menu prices in Canadian dollars. Customers order by phone or on DoorDash.
 
-First, run the development server:
+## Local preview
 
-```bash
+```sh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000). In PowerShell, use `npm.cmd run dev` if script execution is disabled.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Menu and business details
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edit [src/data/restaurant.ts](src/data/restaurant.ts) to update prices, toppings, hours, phone numbers, the address, ordering links, and FAQ answers. Use `holidayHours` for date-specific hours.
 
-## Learn More
+The restaurant’s homepage supplies the menu, logo, contact details, and hero photo. The FAQ supplies the pizza comparison and substitution policy. [Restaurant homepage](https://versatospizza.com/), [restaurant FAQ](https://versatospizza.com/faq)
 
-To learn more about Next.js, take a look at the following resources:
+## Production export
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+npm run lint
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The build writes the static site to `out/`, starting at `out/index.html`. Serve that directory with a static web server to preview the export.

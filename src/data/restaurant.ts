@@ -1,0 +1,230 @@
+const address = {
+  street: "12753 50 St NW",
+  city: "Edmonton",
+  province: "AB",
+};
+
+const fullAddress = `${address.street}, ${address.city}, ${address.province}`;
+
+const directionsQuery = new URLSearchParams({
+  api: "1",
+  destination: fullAddress,
+});
+
+const mapQuery = new URLSearchParams({
+  q: fullAddress,
+  output: "embed",
+});
+
+type Hours = { days: string; time: string };
+
+// Phone numbers and regular hours come from the contact image on versatospizza.com.
+export const restaurant = {
+  name: "Versato’s Pizza",
+  address,
+  phones: {
+    main: { label: "780-413-3440", href: "tel:+17804133440" },
+    alternate: { label: "780-428-3547", href: "tel:+17804283547" },
+  },
+  hours: [
+    { days: "Monday", time: "Closed" },
+    { days: "Tuesday–Wednesday", time: "11 am–10 pm" },
+    { days: "Thursday–Saturday", time: "11 am–11 pm" },
+    { days: "Sunday", time: "3 pm–10 pm" },
+  ],
+  holidayHours: [] as Hours[],
+  links: {
+    doorDash: "https://www.doordash.com/en-CA/store/versatos-pizza-edmonton-38957197/",
+    directions: `https://www.google.com/maps/dir/?${directionsQuery}`,
+    mapEmbed: `https://www.google.com/maps?${mapQuery}`,
+  },
+};
+
+export const pizzaSizes = ["10″", "12″", "15″"] as const;
+
+type PizzaPrices = [number | null, number | null, number | null];
+
+type Pizza = {
+  name: string;
+  toppings: string;
+  thick: PizzaPrices;
+  thinPair?: PizzaPrices;
+};
+
+// In-store prices from the official menu images linked at versatospizza.com (2025-08-30).
+// Prices in each array follow pizzaSizes. A null price marks an unavailable size.
+export const pizzas: Pizza[] = [
+  {
+    name: "Plain Cheese",
+    toppings: "Mozzarella",
+    thick: [28.00, 36.05, 44.75],
+    thinPair: [39.90, 48.40, 58.35],
+  },
+  {
+    name: "Pepperoni",
+    toppings: "Pepperoni, mozzarella",
+    thick: [28.00, 36.05, 44.75],
+    thinPair: [39.90, 48.40, 58.35],
+  },
+  {
+    name: "Veggy",
+    toppings: "Green peppers, onions, mushrooms, pineapple, tomatoes, olives, mozzarella",
+    thick: [28.00, 36.05, 44.75],
+    thinPair: [39.90, 48.40, 58.35],
+  },
+  {
+    name: "Hawaiian",
+    toppings: "Ham, pineapple, mozzarella",
+    thick: [28.00, 36.05, 44.75],
+    thinPair: [39.90, 48.40, 58.35],
+  },
+  {
+    name: "Oilers Special",
+    toppings: "Ham, pepperoni, green peppers, mushrooms, pineapple, mozzarella",
+    thick: [28.00, 36.05, 44.75],
+    thinPair: [39.90, 48.40, 58.35],
+  },
+  {
+    name: "Greek Special",
+    toppings: "Pepperoni, beef, green peppers, onions, tomatoes, olives, mozzarella, feta, parmesan",
+    thick: [29.55, 37.25, 46.05],
+    thinPair: [41.15, 49.85, 59.60],
+  },
+  {
+    name: "Chicken",
+    toppings: "Chicken, green peppers, onions, teriyaki and BBQ sauce mix, mozzarella, cheddar, parmesan",
+    thick: [29.55, 37.25, 46.05],
+    thinPair: [41.15, 49.85, 59.60],
+  },
+  {
+    name: "Taco",
+    toppings: "Beef, green peppers, tomatoes, taco chips, salsa sauce, mozzarella, cheddar",
+    thick: [29.55, 37.25, 46.05],
+    thinPair: [41.15, 49.85, 59.60],
+  },
+  {
+    name: "Flame Thrower",
+    toppings: "Pepperoni, beef, green peppers, onions, hot peppers, mozzarella",
+    thick: [29.55, 37.25, 46.05],
+    thinPair: [41.15, 49.85, 59.60],
+  },
+  {
+    name: "Big Cheese",
+    toppings: "Mozzarella, cheddar, feta, parmesan",
+    thick: [29.55, 37.25, 46.05],
+    thinPair: [41.15, 49.85, 59.60],
+  },
+  {
+    name: "Guybo Special",
+    toppings: "Pepperoni, salami, mushrooms, onions, mozzarella, cheddar",
+    thick: [30.45, 38.45, 47.20],
+    thinPair: [42.35, 51.10, 60.80],
+  },
+  {
+    name: "T-Rex",
+    toppings: "Pepperoni, salami, ham, beef, bacon, mozzarella",
+    thick: [30.45, 38.45, 47.20],
+    thinPair: [42.35, 51.10, 60.80],
+  },
+  {
+    name: "Heater",
+    toppings: "Pepperoni, double sauce, mozzarella, cheddar",
+    thick: [30.45, 38.45, 47.20],
+    thinPair: [42.35, 51.10, 60.80],
+  },
+  {
+    name: "Versato’s Special",
+    toppings: "Pepperoni, salami, ham, mushrooms, onions, green peppers, pineapple, shrimp, mozzarella",
+    thick: [30.45, 38.45, 47.20],
+    thinPair: [42.35, 51.10, 60.80],
+  },
+  {
+    name: "The Big One",
+    toppings: "Extra meat in your choice of T-Rex or Versato’s Special style",
+    thick: [null, 46.95, 57.75],
+  },
+];
+
+export const extraToppings = [
+  { name: "Meat", prices: [2.10, 2.60, 3.15] },
+  { name: "Veggie", prices: [1.50, 2.10, 2.60] },
+  { name: "Cheese", prices: [3.15, 3.70, 4.35] },
+];
+
+export type MenuItem = {
+  name: string;
+  description?: string;
+  options: { label?: string; price: number }[];
+};
+
+export const combos: MenuItem[] = [
+  {
+    name: "Combo 1",
+    description: "Dry garlic ribs, Caesar salad and garlic toast",
+    options: [{ label: "For 1", price: 21.35 }, { label: "For 2", price: 36.95 }],
+  },
+  {
+    name: "Combo 2",
+    description: "Chicken wings, Caesar salad and garlic toast",
+    options: [{ label: "For 1", price: 21.35 }, { label: "For 2", price: 36.95 }],
+  },
+];
+
+export const sides: MenuItem[] = [
+  {
+    name: "Bread Sticks",
+    options: [{ label: "Regular", price: 8.65 }, { label: "Large", price: 10.95 }],
+  },
+  {
+    name: "Boneless Dry Garlic Ribs",
+    options: [{ label: "Regular", price: 17.55 }, { label: "Large", price: 27.10 }],
+  },
+  {
+    name: "Chicken Wings",
+    description: "Hot, honey garlic, BBQ, teriyaki, or salt and pepper",
+    options: [{ price: 17.55 }],
+  },
+  {
+    name: "Caesar Salad",
+    options: [{ label: "Regular", price: 7.80 }, { label: "Large", price: 12.40 }],
+  },
+  { name: "Cheese Toast", options: [{ price: 3.35 }] },
+  {
+    name: "Chicken Fingers",
+    options: [{ label: "Each", price: 2.90 }, { label: "5 for", price: 12.95 }],
+  },
+  { name: "Fries", options: [{ price: 4.80 }] },
+  { name: "Onion Rings", options: [{ price: 4.80 }] },
+  { name: "Garlic Toast", options: [{ price: 2.20 }] },
+];
+
+export const lasagna: MenuItem = {
+  name: "Lasagna",
+  description: "Includes garlic toast",
+  options: [
+    { label: "Single", price: 14.70 },
+    { label: "Family for 6", price: 32.80 },
+    { label: "Party size for 12", price: 59.00 },
+  ],
+};
+
+export const menuNotes = {
+  thick: "Prices are for one Original Thick pizza.",
+  thinPair: "Prices are for both pizzas. Each has half the meat of an Original Thick, so the pair has the same amount of meat spread across two crusts.",
+  flipped: "Ask to have your pizza flipped to keep the crust dry.",
+  pricing: "In-store prices in CAD. Prices may change.",
+  delivery: "Place delivery orders at least one hour before closing.",
+  coupons: "Third-party coupons are excluded.",
+};
+
+// Answers paraphrased from versatospizza.com/faq.
+export const faq = [
+  {
+    question: "What makes The Big One different?",
+    answer: "The Big One has extra meat and weighs about 7 lb. An Original Thick T-Rex or Versato’s Special weighs about 4½ lb. The Big One comes in those two styles.",
+  },
+  {
+    question: "Can I swap a topping?",
+    answer: "Yes. Swap a vegetable for another vegetable, a meat for another meat, or a cheese for another cheese. For example, trade onions for green peppers, pepperoni for beef, or cheddar for feta.",
+  },
+];
