@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useRef, useState, type MouseEvent, type ReactNode, type Ref } from "react";
 
 export type PhoneOrderItem = {
   name: string;
@@ -14,7 +14,8 @@ const currency = new Intl.NumberFormat("en-CA", { style: "currency", currency: "
 
 const PhoneOrderContext = createContext<{
   add: (item: PhoneOrderItem) => void;
-  open: () => void;
+  open: (event: MouseEvent<HTMLButtonElement>) => void;
+  headerTrigger: Ref<HTMLButtonElement>;
   started: boolean;
   count: number;
 } | null>(null);
@@ -50,14 +51,16 @@ export function AddOrderItem({
 }
 
 export function PhoneOrderTrigger({ children }: { children: ReactNode }) {
-  const { count, open, started } = usePhoneOrder();
+  const { count, open, headerTrigger, started } = usePhoneOrder();
   if (!started) return children;
 
   return (
     <button
       type="button"
       className="header-call order-trigger"
+      ref={headerTrigger}
       aria-label={`Review phone order, ${count} ${count === 1 ? "item" : "items"}`}
+      aria-haspopup="dialog"
       onClick={open}
     >
       Order <span aria-hidden="true">{count}</span>
@@ -77,8 +80,11 @@ export function PhoneOrder({
     started: false,
   });
   const dialog = useRef<HTMLDialogElement>(null);
+  const opener = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const headerTrigger = useRef<HTMLButtonElement>(null);
   const count = order.lines.reduce((sum, line) => sum + line.quantity, 0);
+  const itemCount = `${count} ${count === 1 ? "item" : "items"}`;
   const subtotal = order.lines.reduce(
     (sum, line) => sum + Math.round(line.price * 100) * line.quantity,
     0,
@@ -104,22 +110,59 @@ export function PhoneOrder({
     }));
   }
 
+  function open(event: MouseEvent<HTMLButtonElement>) {
+    opener.current = event.currentTarget;
+    dialog.current?.showModal();
+  }
+
   function close() {
     dialog.current?.close();
+  }
+
+  function restoreFocus() {
+    if (dialog.current?.open) return;
+    if (opener.current && !opener.current.isConnected) {
+      headerTrigger.current?.focus();
+    }
+    opener.current = null;
   }
 
   return (
     <PhoneOrderContext.Provider value={{
       add,
-      open: () => dialog.current?.showModal(),
+      open,
+      headerTrigger,
       count,
       started: order.started,
     }}>
       {children}
+      {count > 0 && (
+        <button type="button" className="phone-order-bar" aria-haspopup="dialog" onClick={open}>
+          <span>{itemCount}</span>
+          <span className="phone-order-bar-action">
+            View order
+            <svg
+              className="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M2 3h3l2.5 12H19l2-8H6" />
+              <circle cx="9" cy="20" r="1" />
+              <circle cx="18" cy="20" r="1" />
+            </svg>
+          </span>
+        </button>
+      )}
       <p className="sr-only" role="status">
-        {order.started && `Phone order has ${count} ${count === 1 ? "item" : "items"}.`}
+        {order.started && `Phone order has ${itemCount}.`}
       </p>
-      <dialog className="phone-order" ref={dialog} aria-labelledby="phone-order-heading">
+      <dialog className="phone-order" ref={dialog} aria-labelledby="phone-order-heading" onClose={restoreFocus}>
         <div className="phone-order-head">
           <h2 id="phone-order-heading">Your phone order</h2>
           <button type="button" ref={closeButton} onClick={close}>Close</button>
