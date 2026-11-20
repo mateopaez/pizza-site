@@ -1,3 +1,5 @@
+const name = "Versato’s Pizza";
+
 const address = {
   street: "12753 50 St NW",
   city: "Edmonton",
@@ -12,7 +14,7 @@ const directionsQuery = new URLSearchParams({
 });
 
 const mapQuery = new URLSearchParams({
-  q: fullAddress,
+  q: `${name}, ${fullAddress}`,
   output: "embed",
 });
 
@@ -20,7 +22,7 @@ type Hours = { days: string; time: string };
 
 // Phone numbers and regular hours come from the contact image on versatospizza.com.
 export const restaurant = {
-  name: "Versato’s Pizza",
+  name,
   address,
   phones: {
     main: { label: "780-413-3440", href: "tel:+17804133440" },
@@ -33,6 +35,12 @@ export const restaurant = {
     { days: "Sunday", time: "3 pm–10 pm" },
   ],
   holidayHours: [] as Hours[],
+  googleRating: {
+    // Edmonton Local recorded 4.5 from 898 Google reviews on 2026-10-13.
+    score: 4.5,
+    reviewCount: "900+",
+    href: "https://www.google.com/maps/place/@53.58687,-113.416975,17z/data=!4m10!3m9!1s0x53a03ccec8303b45:0xb0a683131c4c2d5e!5m2!4m1!1i2!8m2!3d53.58687!4d-113.416975!9m1!1b1",
+  },
   links: {
     doorDash: "https://www.doordash.com/en-CA/store/versatos-pizza-edmonton-38957197/",
     directions: `https://www.google.com/maps/dir/?${directionsQuery}`,

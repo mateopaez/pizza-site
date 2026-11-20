@@ -122,7 +122,7 @@ function FaqSection() {
       highlight: bigOne.weight,
       description: `Extra meat on our Original Thick crust, in ${styles.join(" or ")} style.`,
       action: "Build The Big One",
-      href: "#big-one-order",
+      href: "#top",
     },
   ];
 
@@ -293,7 +293,7 @@ function SizePriceTable({
             <th scope="row" role="rowheader">
               <span className="item-name">{name}</span>
               {description && <span className="item-description">{description}</span>}
-              {name === bigOne.name && <a className="menu-choose-style" href="#big-one-order">Choose a style</a>}
+              {name === bigOne.name && <a className="menu-choose-style" href="#top">Choose a style</a>}
             </th>
             {prices.map((price, index) => {
               const size = pizzaSizes[index];
@@ -354,7 +354,7 @@ function MenuItems({ items }: { items: MenuItem[] }) {
 }
 
 export default function Home() {
-  const { name, address, phones, hours, holidayHours, links } = restaurant;
+  const { name, address, phones, hours, holidayHours, googleRating, links } = restaurant;
   const thickPizzas = pizzas.map(({ name, toppings, thick }) => ({
     name,
     description: toppings,
@@ -399,6 +399,16 @@ export default function Home() {
               <nav className="menu-nav" aria-label="Menu categories">
                 {menuCategories.map(({ id, label }) => <a key={id} href={`#${id}`}>{label}</a>)}
               </nav>
+              <a className="menu-rating" href={googleRating.href}>
+                <span className="google-rating-star" aria-hidden="true">★</span>
+                <span className="menu-rating-text">
+                  <span><strong>{googleRating.score}/5</strong> on Google</span>
+                  <span className="menu-rating-reviews">
+                    <span className="menu-rating-divider" aria-hidden="true">·</span>
+                    {googleRating.reviewCount} reviews
+                  </span>
+                </span>
+              </a>
             </div>
 
             <div className="menu-content">
@@ -479,14 +489,20 @@ export default function Home() {
               <div className="visit-map">
                 <iframe
                   src={links.mapEmbed}
-                  title={`Google Maps pin for ${address.street}, ${address.city}`}
+                  title={`Google Maps listing for ${name}`}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-                <a className="button" href={links.directions}>
-                  Get Directions
-                  <Icon name="external" />
-                </a>
+                <div className="visit-map-actions">
+                  <a className="button" href={links.directions}>
+                    Get Directions
+                    <Icon name="external" />
+                  </a>
+                  <a className="visit-rating" href={googleRating.href}>
+                    <span className="google-rating-star" aria-hidden="true">★</span>
+                    <span><strong>{googleRating.score}/5 on Google</strong><br />{googleRating.reviewCount} reviews</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
