@@ -3,21 +3,23 @@ import {
   bigOne,
   combos,
   extraToppings,
-  faq,
   lasagna,
   menuNotes,
+  orderingFaq,
   pizzas,
   pizzaSizes,
   restaurant,
   sides,
+  toppingSwaps,
   type MenuItem,
 } from "@/data/restaurant";
 import { BigOnePicker } from "./big-one-picker";
+import { AddOrderItem, PhoneOrder, PhoneOrderTrigger, type PhoneOrderItem } from "./phone-order";
 
 const menuCategories = [
   { id: "thick-pizza", label: "Original Thick" },
   { id: "two-pizza-deal", label: "Two-Pizza Deal" },
-  { id: "extra-toppings", label: "Extra Toppings" },
+  { id: "extra-toppings", label: "Toppings & Swaps" },
   { id: "combos", label: "Combos" },
   { id: "sides", label: "Sides & Lasagna" },
 ];
@@ -74,10 +76,119 @@ function OrderLinks() {
   );
 }
 
+function ToppingSwapDetails() {
+  return (
+    <details className="topping-swaps">
+      <summary className="disclosure-summary">
+        Swap a topping <span className="disclosure-icon" aria-hidden="true" />
+      </summary>
+      <div className="topping-swap-guide" id="topping-swaps">
+        <p>Choose another topping of the same kind and tell us when you call.</p>
+        <dl>
+          {toppingSwaps.map(({ kind, from, to }) => (
+            <div key={kind}>
+              <dt>{kind}</dt>
+              <dd>{from} <span aria-hidden="true">→</span><span className="sr-only"> to </span> {to}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </details>
+  );
+}
+
+function FaqSection() {
+  const styles = bigOne.styles.map(({ name }) => name);
+  const choices = [
+    {
+      id: "thick",
+      name: "Original Thick",
+      highlight: "One loaded pizza",
+      description: `Our Original Thick ${styles.join(" and ")} weigh ${bigOne.originalThickWeight} each.`,
+      action: "See Original Thick",
+      href: "#thick-pizza",
+    },
+    {
+      id: "pair",
+      name: "Two-Pizza Deal",
+      highlight: "Two thin-topping pizzas",
+      description: "The meat from one Original Thick, spread across two pizzas.",
+      action: "See pizza pairs",
+      href: "#two-pizza-deal",
+    },
+    {
+      id: "big",
+      name: bigOne.name,
+      highlight: bigOne.weight,
+      description: `Extra meat on our Original Thick crust, in ${styles.join(" or ")} style.`,
+      action: "Build The Big One",
+      href: "#big-one-order",
+    },
+  ];
+
+  return (
+    <section className="faq-section" id="faq" aria-labelledby="faq-heading">
+      <div className="faq-counter" id="faq-pizza">
+        <div className="shell">
+          <div className="faq-intro">
+            <h2 id="faq-heading">Which pizza are you craving?</h2>
+            <a href="#faq-ordering">Ordering questions</a>
+          </div>
+          <ul className="faq-choices" role="list">
+            {choices.map(({ id, name, highlight, description, action, href }) => (
+              <li className={`faq-choice faq-choice--${id}`} key={id}>
+                <h3>{name}</h3>
+                <p className="faq-choice-highlight">{highlight}</p>
+                <p className="faq-choice-description">{description}</p>
+                <div className="faq-choice-footer">
+                  <a className="button" href={href}>{action}</a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className="shell faq-ordering" id="faq-ordering">
+        <div className="faq-ordering-intro">
+          <h3>Frequently Asked Questions</h3>
+          <a href={restaurant.phones.main.href}>
+            <Icon name="phone" />
+            Call the shop
+          </a>
+        </div>
+        <div className="faq-answers">
+          {orderingFaq.map(({ question, answer, orderOptions }) => (
+            <details key={question}>
+              <summary className="disclosure-summary">
+                {question} <span className="disclosure-icon" aria-hidden="true" />
+              </summary>
+              <div className="faq-answer">
+                <p>{answer}</p>
+                {orderOptions && (
+                  <>
+                    <ul className="faq-order-options" role="list">
+                      {orderOptions.map(({ intro, label, href, suffix }) => (
+                        <li key={href}>{intro} <a href={href}>{label}</a>{suffix}.</li>
+                      ))}
+                    </ul>
+                    <p className="menu-add-guide faq-phone-order-tip">
+                      Use the + buttons on the <a href="#menu">menu</a> to build a phone order list, then read it to us when you call.
+                    </p>
+                  </>
+                )}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function BigOneHero() {
   const sizes = pizzaSizes.flatMap((label, index) => {
     const price = bigOne.thick[index];
-    return price === null ? [] : [{ label, price: currency.format(price) }];
+    return price === null ? [] : [{ label, price, formattedPrice: currency.format(price) }];
   });
   const styles = bigOne.styles.map(({ name, toppings }) => ({ name, toppings }));
 
@@ -106,15 +217,15 @@ function BigOneHero() {
           </figure>
         </div>
 
-        <div className="order-ticket">
+        <div className="order-ticket" id="big-one-order">
           <h2>Order by phone</h2>
-          <BigOnePicker sizes={sizes} styles={styles} />
+          <BigOnePicker name={bigOne.name} sizes={sizes} styles={styles} />
           <noscript>
             <p className="ticket-fallback">
               Choose {styles.map(({ name }) => name).join(" or ")} when you call.
             </p>
             <ul className="ticket-fallback">
-              {sizes.map(({ label, price }) => <li key={label}>{label} {price} CAD</li>)}
+              {sizes.map(({ label, formattedPrice }) => <li key={label}>{label} {formattedPrice} CAD</li>)}
             </ul>
           </noscript>
           <a className="button button-primary ticket-call" href={restaurant.phones.main.href}>
@@ -137,12 +248,34 @@ type SizedMenuItem = {
   prices: readonly (number | null)[];
 };
 
+function MenuPrice({ item, label }: { item: PhoneOrderItem; label?: string }) {
+  const price = currency.format(item.price);
+
+  return (
+    <>
+      <AddOrderItem item={item} className="menu-add-price">
+        {label && <span className="size-label">{label}</span>}
+        <span className="menu-add-amount">
+          <span className="price">{price}</span>
+          <span className="menu-add-plus" aria-hidden="true">+</span>
+        </span>
+      </AddOrderItem>
+      <noscript className="menu-price-fallback">
+        {label && <span className="size-label">{label}</span>}
+        <span className="price">{price}</span>
+      </noscript>
+    </>
+  );
+}
+
 function SizePriceTable({
   labelledBy,
   rows,
+  orderStyle,
 }: {
   labelledBy: string;
   rows: SizedMenuItem[];
+  orderStyle?: string;
 }) {
   return (
     <table className="size-table" aria-labelledby={labelledBy} role="table">
@@ -160,18 +293,31 @@ function SizePriceTable({
             <th scope="row" role="rowheader">
               <span className="item-name">{name}</span>
               {description && <span className="item-description">{description}</span>}
+              {name === bigOne.name && <a className="menu-choose-style" href="#big-one-order">Choose a style</a>}
             </th>
-            {prices.map((price, index) => (
-              <td key={pizzaSizes[index]} role="cell">
-                <span className="size-label" aria-hidden="true">{pizzaSizes[index]}</span>
-                {price === null ? (
-                  <>
-                    <span className="unavailable" aria-hidden="true">—</span>
-                    <span className="sr-only">Unavailable</span>
-                  </>
-                ) : <span className="price">{currency.format(price)}</span>}
-              </td>
-            ))}
+            {prices.map((price, index) => {
+              const size = pizzaSizes[index];
+              return (
+                <td key={size} role="cell">
+                  {price !== null && orderStyle && name !== bigOne.name ? (
+                    <MenuPrice
+                      label={size}
+                      item={{ name, detail: `${size} ${orderStyle}`, price }}
+                    />
+                  ) : (
+                    <>
+                      <span className="size-label" aria-hidden="true">{size}</span>
+                      {price === null ? (
+                        <>
+                          <span className="unavailable" aria-hidden="true">—</span>
+                          <span className="sr-only">Unavailable</span>
+                        </>
+                      ) : <span className="price">{currency.format(price)}</span>}
+                    </>
+                  )}
+                </td>
+              );
+            })}
           </tr>
         ))}
       </tbody>
@@ -179,13 +325,12 @@ function SizePriceTable({
   );
 }
 
-function MenuOptions({ options }: { options: MenuItem["options"] }) {
+function MenuOptions({ name, options }: { name: string; options: MenuItem["options"] }) {
   return (
     <ul className="menu-options" role="list">
       {options.map(({ label, price }) => (
         <li key={label ?? price}>
-          {label && <span className="size-label">{label}</span>}
-          <span className="price">{currency.format(price)}</span>
+          <MenuPrice label={label} item={{ name, detail: label, price }} />
         </li>
       ))}
     </ul>
@@ -201,7 +346,7 @@ function MenuItems({ items }: { items: MenuItem[] }) {
             <p className="item-name">{name}</p>
             {description && <p className="item-description">{description}</p>}
           </div>
-          <MenuOptions options={options} />
+          <MenuOptions name={name} options={options} />
         </li>
       ))}
     </ul>
@@ -220,7 +365,7 @@ export default function Home() {
   );
 
   return (
-    <>
+    <PhoneOrder phone={phones.main}>
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
         <div className="shell header-content">
@@ -232,11 +377,13 @@ export default function Home() {
             <a href="#faq">FAQ</a>
             <a href="#visit">Visit</a>
           </nav>
-          <a className="header-call" href={phones.main.href} aria-label={`Call ${phones.main.label}`}>
-            <Icon name="phone" />
-            <span className="call-short">Call</span>
-            <span className="call-number">{phones.main.label}</span>
-          </a>
+          <PhoneOrderTrigger>
+            <a className="header-call" href={phones.main.href} aria-label={`Call ${phones.main.label}`}>
+              <Icon name="phone" />
+              <span className="call-short">Call</span>
+              <span className="call-number">{phones.main.label}</span>
+            </a>
+          </PhoneOrderTrigger>
         </div>
       </header>
 
@@ -248,6 +395,7 @@ export default function Home() {
             <div className="menu-index">
               <h2 id="menu-heading">Menu</h2>
               <p>{menuNotes.pricing}</p>
+              <p className="menu-add-guide">Click + to start a phone order.</p>
               <nav className="menu-nav" aria-label="Menu categories">
                 {menuCategories.map(({ id, label }) => <a key={id} href={`#${id}`}>{label}</a>)}
               </nav>
@@ -257,19 +405,20 @@ export default function Home() {
               <section className="menu-category" id="thick-pizza" aria-labelledby="thick-heading">
                 <h3 id="thick-heading">Original Thick Pizza</h3>
                 <p className="category-note">{menuNotes.thick}</p>
-                <SizePriceTable labelledBy="thick-heading" rows={thickPizzas} />
+                <SizePriceTable labelledBy="thick-heading" rows={thickPizzas} orderStyle="Original Thick" />
                 <p className="menu-note">{menuNotes.flipped}</p>
               </section>
 
               <section className="menu-category" id="two-pizza-deal" aria-labelledby="pair-heading">
                 <h3 id="pair-heading">Two Pizzas, Thin Topping</h3>
                 <p className="category-note">{menuNotes.thinPair}</p>
-                <SizePriceTable labelledBy="pair-heading" rows={thinPairs} />
+                <SizePriceTable labelledBy="pair-heading" rows={thinPairs} orderStyle="Two-Pizza Deal" />
               </section>
 
               <section className="menu-category" id="extra-toppings" aria-labelledby="toppings-heading">
                 <h3 id="toppings-heading">Extra Toppings per Pizza</h3>
                 <SizePriceTable labelledBy="toppings-heading" rows={extraToppings} />
+                <ToppingSwapDetails />
               </section>
 
               <section className="menu-category" id="combos" aria-labelledby="combos-heading">
@@ -283,30 +432,18 @@ export default function Home() {
                 <div className="lasagna">
                   <h4>{lasagna.name}</h4>
                   <p className="item-description">{lasagna.description}</p>
-                  <MenuOptions options={lasagna.options} />
+                  <MenuOptions name={lasagna.name} options={lasagna.options} />
                 </div>
               </section>
             </div>
           </div>
         </section>
 
-        <section className="faq-section" id="faq" aria-labelledby="faq-heading">
-          <div className="shell section-layout">
-            <h2 id="faq-heading">FAQ</h2>
-            <div className="faq-list">
-              {faq.map(({ question, answer }) => (
-                <details key={question}>
-                  <summary>{question}<span className="plus" aria-hidden="true" /></summary>
-                  <p>{answer}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
+        <FaqSection />
 
         <section className="visit-section" id="visit" aria-labelledby="visit-heading">
           <div className="shell">
-            <h2 id="visit-heading">Visit &amp; Order</h2>
+            <h2 id="visit-heading">Visit & Order</h2>
             <div className="visit-layout">
               <div className="visit-details">
                 <address>
@@ -362,6 +499,6 @@ export default function Home() {
           <p>{menuNotes.coupons}</p>
         </div>
       </footer>
-    </>
+    </PhoneOrder>
   );
 }

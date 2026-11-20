@@ -66,13 +66,17 @@ const versatosSpecial = {
   thinPair: [42.35, 51.10, 60.80],
 } satisfies Pizza;
 
+const bigOneWeight = "about 7 lb";
+const originalThickSpecialtyWeight = "about 4½ lb";
+
 export const bigOne = {
   name: "The Big One",
-  toppings: `Extra meat in your choice of ${tRex.name} or ${versatosSpecial.name} style`,
+  toppings: `Choose ${tRex.name} or ${versatosSpecial.name} with extra meat on our Original Thick crust. The Big One weighs ${bigOneWeight}. The Original Thick versions of those pizzas weigh ${originalThickSpecialtyWeight}.`,
   thick: [null, 46.95, 57.75],
   styles: [tRex, versatosSpecial],
-  weight: "about 7 lb",
-} satisfies Pizza & { styles: Pizza[]; weight: string };
+  weight: bigOneWeight,
+  originalThickWeight: originalThickSpecialtyWeight,
+} satisfies Pizza & { styles: Pizza[]; weight: string; originalThickWeight: string };
 
 // Prices in each array follow pizzaSizes. A null price marks an unavailable size.
 export const pizzas: Pizza[] = [
@@ -225,14 +229,33 @@ export const menuNotes = {
   coupons: "Third-party coupons are excluded.",
 };
 
-// Answers paraphrased from versatospizza.com/faq.
-export const faq = [
+// Swap examples from versatospizza.com/faq.
+export const toppingSwaps = [
+  { kind: "Vegetable", from: "Onions", to: "green peppers" },
+  { kind: "Meat", from: "Pepperoni", to: "beef" },
+  { kind: "Cheese", from: "Cheddar", to: "feta" },
+];
+
+export const orderingFaq = [
   {
-    question: "What makes The Big One different?",
-    answer: `The Big One has extra meat and weighs ${bigOne.weight}. An Original Thick T-Rex or Versato’s Special weighs about 4½ lb. The Big One comes in those two styles.`,
+    question: "How can I order from Versato's Pizza?",
+    answer: "Choose how you’d like to order.",
+    orderOptions: [
+      { intro: "Order online through", label: "DoorDash", href: restaurant.links.doorDash },
+      { intro: "Call us directly at", label: restaurant.phones.main.label, href: restaurant.phones.main.href },
+      { intro: "Pick up at", label: restaurant.address.street, href: restaurant.links.directions, suffix: `, ${restaurant.address.city}` },
+    ],
+  },
+  {
+    question: "What areas do you deliver to?",
+    answer: "lorem ipsum dolor sit amet consectetur adipiscing elit culpa minim maxime tempore soluta ex est irure veniam sunt excepturi officia in laborum harum cum distinctio duis aliqua quo cum voluptas excepturi in ut ducimus cupiditate nisi vero ducimus et deserunt iusto dolor et ut facilis officia facere omnis praesentium sint",
   },
   {
     question: "Can I swap a topping?",
-    answer: "Yes. Swap a vegetable for another vegetable, a meat for another meat, or a cheese for another cheese. For example, trade onions for green peppers, pepperoni for beef, or cheddar for feta.",
+    answer: "Yes. Swap it for another of the same kind. For example, trade onions for green peppers, pepperoni for beef, or cheddar for feta. Mention the swap when you call.",
+  },
+  {
+    question: "What are your most popular pizzas?",
+    answer: "lorem ipsum dolor sit amet consectetur adipiscing elit culpa minim maxime tempore soluta ex est irure veniam sunt excepturi officia in laborum harum cum distinctio duis aliqua quo cum voluptas excepturi in ut ducimus cupiditate nisi vero ducimus et deserunt iusto dolor et ut facilis officia facere omnis praesentium sint",
   },
 ];
